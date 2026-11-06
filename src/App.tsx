@@ -6,6 +6,7 @@ import { localStore } from './data/localStore'
 import { supabase } from './data/supabase'
 import { createSupabaseStore } from './data/supabaseStore'
 import Header from './components/Header'
+import { RankDialogProvider } from './components/RankDialog'
 import Login from './pages/Login'
 import Search from './pages/Search'
 import Ranking from './pages/Ranking'
@@ -28,15 +29,17 @@ export default function App() {
 
   return (
     <AlbumsProvider key={userId ?? 'guest'} store={store}>
-      <Header />
-      <main className="mx-auto max-w-5xl px-4 pb-16 pt-6">
-        <Routes>
-          <Route path="/" element={<Search />} />
-          <Route path="/ranking" element={<Ranking />} />
-          <Route path="/shortlist" element={<Shortlist />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
+      <RankDialogProvider>
+        <Header />
+        <main className="mx-auto max-w-5xl px-4 pb-16 pt-6">
+          <Routes>
+            <Route path="/" element={<Search />} />
+            <Route path="/ranking" element={<Ranking />} />
+            <Route path="/shortlist" element={<Shortlist />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </RankDialogProvider>
     </AlbumsProvider>
   )
 }

@@ -9,8 +9,8 @@ interface AlbumsApi {
   shortlist: Entry[]
   /** Which list the album (or the same album from another source/edition) is in. */
   listOf(album: Album): ListName | null
-  /** Add (or move) an album to the end of a list. */
-  addTo(album: Album, list: ListName): Promise<void>
+  /** Add (or move) an album into a list, at `index` (0-based) or at the end. */
+  addTo(album: Album, list: ListName, index?: number): Promise<void>
   remove(album: Album): Promise<void>
   /** Move an entry within its list to the given index. */
   reorder(list: ListName, from: number, to: number): Promise<void>
@@ -19,6 +19,15 @@ interface AlbumsApi {
 const Ctx = createContext<AlbumsApi | null>(null)
 
 const byPosition = (a: Entry, b: Entry) => a.position - b.position
+
+/** Fractional position that puts an item at `index` among `items` (sorted, without the item). */
+function positionAt(items: Entry[], index: number) {
+  const before = items[index - 1]?.position
+  const after = items[index]?.position
+  if (before === undefined) return (after ?? 1) - 1
+  if (after === undefined) return before + 1
+  return (before + after) / 2
+}
 
 export function AlbumsProvider({ store, children }: { store: AlbumStore; children: ReactNode }) {
   const [entries, setEntries] = useState<Entry[]>([])
@@ -70,15 +79,15 @@ export function AlbumsProvider({ store, children }: { store: AlbumStore; childre
       ranked,
       shortlist,
       listOf: (album) => find(album)?.list ?? null,
-      addTo(album, list) {
+      addTo(album, list, index) {
         const existing = find(album)
-        const target = list === 'ranked' ? ranked : shortlist
-        const last = target.filter((e) => e.id !== existing?.id).at(-1)
+        const target = (list === 'ranked' ? ranked : shortlist).filter((e) => e.id !== existing?.id)
+        const at = index === undefined ? target.length : Math.max(0, Math.min(index, target.length))
         // Moving keeps the saved entry (and its id); fill in a source id it was missing.
         const fields: Album = existing
           ? { ...existing, itunesId: existing.itunesId ?? album.itunesId, mbid: existing.mbid ?? album.mbid }
           : album
-        const entry: Entry = { ...fields, list, position: (last?.position ?? 0) + 1 }
+        const entry: Entry = { ...fields, list, position: positionAt(target, at) }
         return commit([...entries.filter((e) => e.id !== entry.id), entry], () => store.save(entry))
       },
       remove(album) {
@@ -89,13 +98,8 @@ export function AlbumsProvider({ store, children }: { store: AlbumStore; childre
       reorder(list, from, to) {
         const items = list === 'ranked' ? ranked : shortlist
         if (from === to || !items[from]) return Promise.resolve()
-        const rest = items.filter((_, i) => i !== from)
-        const before = rest[to - 1]?.position
-        const after = rest[to]?.position
         // Fractional positioning: only the moved row changes.
-        const position =
-          before === undefined ? (after ?? 1) - 1 : after === undefined ? before + 1 : (before + after) / 2
-        const moved = { ...items[from], position }
+        const moved = { ...items[from], position: positionAt(items.filter((_, i) => i !== from), to) }
         return commit(
           entries.map((e) => (e.id === moved.id ? moved : e)),
           () => store.save(moved),

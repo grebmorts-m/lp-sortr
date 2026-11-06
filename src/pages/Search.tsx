@@ -8,6 +8,7 @@ import AlbumMeta from '../components/AlbumMeta'
 import ErrorBanner from '../components/ErrorBanner'
 import ListButtons from '../components/ListButtons'
 import AlbumDrawer from '../components/AlbumDrawer'
+import Segmented from '../components/Segmented'
 
 const FIELDS: [SearchField, string][] = [
   ['all', 'Show All'],
@@ -91,23 +92,7 @@ export default function Search() {
         </div>
       </div>
 
-      <div role="radiogroup" aria-label="Search in" className="mb-6 inline-flex rounded-lg bg-zinc-200/70 p-1 dark:bg-zinc-800">
-        {FIELDS.map(([value, label]) => (
-          <button
-            key={value}
-            role="radio"
-            aria-checked={field === value}
-            onClick={() => setField(value)}
-            className={`rounded-md px-3 py-1 text-sm font-medium transition ${
-              field === value
-                ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-600 dark:text-white'
-                : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <Segmented options={FIELDS} value={field} onChange={setField} label="Search in" className="mb-6" />
 
       <ErrorBanner message={searchError ?? error} />
 
