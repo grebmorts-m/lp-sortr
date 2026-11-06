@@ -3,9 +3,11 @@ import { useAlbums } from '../data/AlbumsContext'
 import Cover from '../components/Cover'
 import AlbumMeta from '../components/AlbumMeta'
 import ErrorBanner from '../components/ErrorBanner'
+import { useRankDialog } from '../components/RankDialog'
 
 export default function Shortlist() {
-  const { shortlist, addTo, remove, loading, error } = useAlbums()
+  const { shortlist, remove, loading, error } = useAlbums()
+  const { openRank } = useRankDialog()
 
   if (loading) return <p className="py-16 text-center text-zinc-500">Loading…</p>
 
@@ -25,7 +27,7 @@ export default function Shortlist() {
               <Cover src={entry.cover} alt={entry.title} />
               <AlbumMeta album={entry} />
               <div className="mt-auto flex gap-1.5">
-                <button className="btn btn-primary flex-1" onClick={() => addTo(entry, 'ranked')}>
+                <button className="btn btn-primary flex-1" onClick={() => openRank(entry)}>
                   Listened → rank
                 </button>
                 <button className="btn btn-ghost px-2 hover:text-red-600" onClick={() => remove(entry)} aria-label="Remove">✕</button>
