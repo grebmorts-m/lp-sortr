@@ -163,3 +163,13 @@ export function getItunesDetails(id: number, mbid: string | null = null): Promis
   }
   return p
 }
+
+/** Find the same album on iTunes (for upgrading MusicBrainz-only entries). */
+export async function findItunesMatch(album: Pick<Album, 'artist' | 'title' | 'year'>, signal?: AbortSignal) {
+  const { results } = await get<{ results: ItResult[] }>(
+    '/search',
+    { term: `${album.artist} ${album.title}`, media: 'music', entity: 'album', limit: '25' },
+    signal,
+  )
+  return toAlbums(results).find((a) => sameAlbum(a, album)) ?? null
+}

@@ -1,32 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-accent-50: oklch(0.98 0.02 75);
-  --color-accent-400: oklch(0.8 0.15 70);
-  --color-accent-500: oklch(0.74 0.16 62);
-  --color-accent-600: oklch(0.66 0.16 55);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+
+  --color-bg: #050212;
+  --color-surface: #0f1d2e;
+  --color-surface-2: #16283d;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-lime: #e6f9af;
+  --color-lime-soft: rgb(230 249 175 / 0.15);
+  --color-fg: #eef0f7;
+  --color-muted: #9aa3b5;
+  --color-faint: #6b7489;
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
   body {
-    @apply bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+    @apply bg-bg text-fg antialiased;
+  }
+  ::selection {
+    @apply bg-lime text-bg;
   }
 }
 
 @utility btn {
   @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition
-    focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500
+    focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime
     disabled:cursor-not-allowed disabled:opacity-50;
 }
 @utility btn-primary {
-  @apply bg-accent-500 text-zinc-950 hover:bg-accent-400;
+  @apply bg-lime text-bg hover:bg-lime/85;
 }
 @utility btn-ghost {
-  @apply text-zinc-600 hover:bg-zinc-200/70 dark:text-zinc-300 dark:hover:bg-zinc-800;
+  @apply text-muted hover:bg-surface-2 hover:text-fg;
 }
 @utility input {
-  @apply w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-base outline-none
-    placeholder:text-zinc-400 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/30
-    dark:border-zinc-700 dark:bg-zinc-900;
+  @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-base text-fg outline-none
+    placeholder:text-faint focus:border-lime focus:ring-2 focus:ring-lime/25;
 }

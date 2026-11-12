@@ -9,22 +9,22 @@ export default function Shortlist() {
   const { shortlist, remove, loading, error } = useAlbums()
   const { openRank } = useRankDialog()
 
-  if (loading) return <p className="py-16 text-center text-zinc-500">Loading…</p>
+  if (loading) return <p className="py-16 text-center text-muted">Loading…</p>
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-semibold tracking-tight">Shortlist</h1>
-      <p className="mb-6 text-sm text-zinc-500">Albums to listen to next. Once you've heard one, rank it.</p>
+      <h1 className="mb-1 font-display text-3xl font-semibold">Shortlist</h1>
+      <p className="mb-6 text-sm text-muted">Albums to listen to next. Once you've heard one, rank it.</p>
       <ErrorBanner message={error} />
       {shortlist.length === 0 ? (
-        <p className="py-16 text-center text-zinc-500">
-          Your shortlist is empty. <Link to="/" className="text-accent-600 underline">Find something to listen to</Link>.
+        <p className="py-16 text-center text-muted">
+          Your shortlist is empty. <Link to="/" className="text-lime underline">Find something to listen to</Link>.
         </p>
       ) : (
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {shortlist.map((entry) => (
-            <li key={entry.id} className="flex flex-col gap-2 rounded-xl bg-white p-3 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800">
-              <Cover src={entry.cover} alt={entry.title} />
+          {shortlist.map((entry, i) => (
+            <li key={entry.id} className="flex flex-col gap-2 rounded-xl bg-surface p-3 shadow-sm ring-1 ring-line">
+              <Cover src={entry.cover} alt={entry.title} eager={i < 8} />
               <AlbumMeta album={entry} />
               <div className="mt-auto flex gap-1.5">
                 <button className="btn btn-primary flex-1" onClick={() => openRank(entry)}>

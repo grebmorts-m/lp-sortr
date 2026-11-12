@@ -13,7 +13,7 @@ export default function Segmented<T extends string>({
   className?: string
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className={`inline-flex rounded-lg bg-zinc-200/70 p-1 dark:bg-zinc-800 ${className}`}>
+    <div role="radiogroup" aria-label={label} className={`inline-flex rounded-lg bg-surface p-1 ring-1 ring-line ${className}`}>
       {options.map(([v, text]) => (
         <button
           key={v}
@@ -23,8 +23,8 @@ export default function Segmented<T extends string>({
           onClick={() => onChange(v)}
           className={`rounded-md px-3 py-1 text-sm font-medium transition ${
             value === v
-              ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-600 dark:text-white'
-              : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
+              ? 'bg-surface-2 text-fg shadow-sm'
+              : 'text-muted hover:text-fg'
           }`}
         >
           {text}

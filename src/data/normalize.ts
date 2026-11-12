@@ -26,7 +26,17 @@ export function sameAlbum(a: Pick<Album, 'artist' | 'title' | 'year'>, b: Pick<A
   return a.year == null || b.year == null || Math.abs(a.year - b.year) <= 1
 }
 
-/** Bigger version of a cover URL (iTunes artwork or Cover Art Archive). */
-export function largeCover(url: string) {
-  return url.replace(/\/\d+x\d+bb\./, '/600x600bb.').replace(/\/front-250$/, '/front-500')
+export type CoverSize = 'sm' | 'md' | 'lg'
+
+/**
+ * Cover URL at a display size. iTunes artwork can be any size; the Cover Art Archive
+ * offers 250 (smallest) and 500.
+ */
+export function coverAt(url: string, size: CoverSize) {
+  const px = { sm: 120, md: 250, lg: 600 }[size]
+  if (/\/\d+x\d+bb\./.test(url)) return url.replace(/\/\d+x\d+bb\./, `/${px}x${px}bb.`)
+  if (size === 'lg') return url.replace(/\/front-250$/, '/front-500')
+  return url
 }
+
+export const isSlowCover = (url: string) => url.includes('coverartarchive.org')

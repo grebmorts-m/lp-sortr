@@ -45,7 +45,7 @@ export default function AlbumDrawer({ album, onClose }: { album: Album | null; o
   return (
     <div className="fixed inset-0 z-50">
       <div
-        className={`absolute inset-0 bg-zinc-950/50 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-0 bg-bg/50 transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
         onClick={onClose}
         aria-hidden
       />
@@ -53,12 +53,12 @@ export default function AlbumDrawer({ album, onClose }: { album: Album | null; o
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl transition-transform duration-200 ease-out dark:bg-zinc-900
+        className={`absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col overflow-hidden rounded-t-2xl bg-surface shadow-2xl ring-1 ring-line transition-transform duration-200 ease-out
           sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-full sm:max-w-md sm:rounded-none
           ${visible ? 'translate-y-0 sm:translate-x-0' : 'translate-y-full sm:translate-x-full sm:translate-y-0'}`}
       >
-        <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-2 dark:border-zinc-800">
-          <span className="text-sm font-medium text-zinc-500">Album info</span>
+        <div className="flex items-center justify-between border-b border-line px-4 py-2">
+          <span className="text-sm font-medium text-muted">Album info</span>
           <button ref={closeRef} className="btn btn-ghost px-2" onClick={onClose} aria-label="Close">
             ✕
           </button>
@@ -94,12 +94,12 @@ function DrawerBody({ album, titleId, onClose }: { album: Album; titleId: string
   return (
     <>
       <div className="flex gap-4 sm:flex-col">
-        <Cover src={album.cover} alt={album.title} large className="w-28 shrink-0 shadow-md sm:w-full" />
+        <Cover src={album.cover} alt={album.title} size="lg" eager className="w-28 shrink-0 shadow-md sm:w-full" />
         <div className="min-w-0">
-          <h2 id={titleId} className="text-xl font-semibold leading-tight tracking-tight">{album.title}</h2>
-          <p className="mt-0.5 text-zinc-500">
+          <h2 id={titleId} className="font-display text-2xl font-semibold leading-tight">{album.title}</h2>
+          <p className="mt-0.5 text-muted">
             {album.artist}
-            {album.year && <span className="text-zinc-400"> · {album.year}</span>}
+            {album.year && <span className="text-muted"> · {album.year}</span>}
           </p>
         </div>
       </div>
@@ -109,7 +109,7 @@ function DrawerBody({ album, titleId, onClose }: { album: Album; titleId: string
         {load.status === 'error' && (
           <div>
             <ErrorBanner message={load.message} />
-            <button className="btn btn-ghost ring-1 ring-zinc-300 dark:ring-zinc-700" onClick={() => setAttempt((n) => n + 1)}>
+            <button className="btn btn-ghost ring-1 ring-line" onClick={() => setAttempt((n) => n + 1)}>
               Retry
             </button>
           </div>
@@ -131,7 +131,7 @@ function Details({ d }: { d: AlbumDetails }) {
           {d.genres.length > 0 && (
             <ul className="flex flex-wrap gap-1.5">
               {d.genres.map((g) => (
-                <li key={g} className="rounded-full bg-accent-500/15 px-2.5 py-0.5 text-xs font-medium text-accent-600 dark:text-accent-400">
+                <li key={g} className="rounded-full bg-lime/15 px-2.5 py-0.5 text-xs font-medium text-lime">
                   {g}
                 </li>
               ))}
@@ -140,19 +140,19 @@ function Details({ d }: { d: AlbumDetails }) {
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
             {d.releaseDate && (
               <>
-                <dt className="text-zinc-500">Released</dt>
+                <dt className="text-muted">Released</dt>
                 <dd>{d.releaseDate}</dd>
               </>
             )}
             {d.label && (
               <>
-                <dt className="text-zinc-500">Label</dt>
+                <dt className="text-muted">Label</dt>
                 <dd>{d.label}</dd>
               </>
             )}
             {d.copyright && (
               <>
-                <dt className="text-zinc-500">Rights</dt>
+                <dt className="text-muted">Rights</dt>
                 <dd>{d.copyright}</dd>
               </>
             )}
@@ -161,26 +161,26 @@ function Details({ d }: { d: AlbumDetails }) {
       )}
 
       <section>
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">Tracks</h3>
+        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">Tracks</h3>
         {d.discs.length === 0 ? (
-          <p className="text-sm text-zinc-500">No track listing available.</p>
+          <p className="text-sm text-muted">No track listing available.</p>
         ) : (
           <div className="flex flex-col gap-4">
             {d.discs.map((disc, i) => (
               <div key={i}>
                 {multiDisc && (
-                  <div className="mb-1 text-xs font-medium text-zinc-500">
+                  <div className="mb-1 text-xs font-medium text-muted">
                     Disc {i + 1}
                     {disc.format && ` · ${disc.format}`}
                     {disc.title && ` · ${disc.title}`}
                   </div>
                 )}
-                <ol className="divide-y divide-zinc-100 text-sm dark:divide-zinc-800">
+                <ol className="divide-y divide-line text-sm">
                   {disc.tracks.map((t, j) => (
                     <li key={j} className="flex items-baseline gap-3 py-1.5">
-                      <span className="w-6 shrink-0 text-right tabular-nums text-zinc-400">{t.number}</span>
+                      <span className="w-6 shrink-0 text-right tabular-nums text-muted">{t.number}</span>
                       <span className="min-w-0 flex-1">{t.title}</span>
-                      <span className="shrink-0 tabular-nums text-zinc-500">
+                      <span className="shrink-0 tabular-nums text-muted">
                         {t.lengthMs ? formatDuration(t.lengthMs) : '–'}
                       </span>
                     </li>
@@ -189,7 +189,7 @@ function Details({ d }: { d: AlbumDetails }) {
               </div>
             ))}
             {d.totalMs > 0 && (
-              <div className="flex justify-between border-t border-zinc-200 pt-2 text-sm font-medium dark:border-zinc-800">
+              <div className="flex justify-between border-t border-line pt-2 text-sm font-medium">
                 <span>Total</span>
                 <span className="tabular-nums">{formatDuration(d.totalMs)}</span>
               </div>
@@ -200,12 +200,12 @@ function Details({ d }: { d: AlbumDetails }) {
 
       <section className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
         {d.links.map((l) => (
-          <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="text-accent-600 hover:underline dark:text-accent-400">
+          <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="text-lime hover:underline">
             {l.label} ↗
           </a>
         ))}
         {d.musicbrainzUrl && (
-          <a href={d.musicbrainzUrl} target="_blank" rel="noreferrer" className="text-accent-600 hover:underline dark:text-accent-400">
+          <a href={d.musicbrainzUrl} target="_blank" rel="noreferrer" className="text-lime hover:underline">
             View on MusicBrainz ↗
           </a>
         )}
@@ -218,11 +218,11 @@ function Skeleton() {
   return (
     <div className="animate-pulse space-y-3" aria-label="Loading album details">
       <div className="flex gap-2">
-        <div className="h-5 w-20 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-5 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-5 w-20 rounded-full bg-surface-2" />
+        <div className="h-5 w-16 rounded-full bg-surface-2" />
       </div>
       {Array.from({ length: 8 }, (_, i) => (
-        <div key={i} className="h-4 rounded bg-zinc-200 dark:bg-zinc-800" style={{ width: `${60 + ((i * 37) % 40)}%` }} />
+        <div key={i} className="h-4 rounded bg-surface-2" style={{ width: `${60 + ((i * 37) % 40)}%` }} />
       ))}
     </div>
   )
@@ -237,7 +237,7 @@ function RemoveFromRanking({ album, onRemoved }: { album: Album; onRemoved: () =
   if (!confirming) {
     return (
       <button
-        className="btn mt-8 w-full text-red-600 ring-1 ring-red-200 hover:bg-red-50 dark:text-red-400 dark:ring-red-900 dark:hover:bg-red-950/50"
+        className="btn mt-8 w-full text-red-600 ring-1 ring-red-200 hover:bg-red-50 text-red-400 ring-red-900 hover:bg-red-950/50"
         onClick={() => setConfirming(true)}
       >
         Remove
@@ -246,13 +246,13 @@ function RemoveFromRanking({ album, onRemoved }: { album: Album; onRemoved: () =
   }
 
   return (
-    <div role="alertdialog" aria-label="Confirm removal" className="mt-8 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950/40">
-      <p className="mb-2 text-sm text-red-800 dark:text-red-300">
+    <div role="alertdialog" aria-label="Confirm removal" className="mt-8 rounded-lg border border-red-200 bg-red-50 p-3 border-red-900 bg-red-950/40">
+      <p className="mb-2 text-sm text-red-800 text-red-300">
         Remove <strong>{album.title}</strong> from your ranking? This can't be undone.
       </p>
       <div className="flex gap-1.5">
         <button
-          className="btn flex-1 bg-red-600 text-white hover:bg-red-700"
+          className="btn flex-1 bg-red-600 text-fg hover:bg-red-700"
           onClick={() => {
             remove(album)
             onRemoved()
@@ -261,7 +261,7 @@ function RemoveFromRanking({ album, onRemoved }: { album: Album; onRemoved: () =
         >
           Yes, Remove This Album
         </button>
-        <button className="btn btn-ghost flex-1 ring-1 ring-zinc-300 dark:ring-zinc-700" onClick={() => setConfirming(false)}>
+        <button className="btn btn-ghost flex-1 ring-1 ring-line" onClick={() => setConfirming(false)}>
           Cancel
         </button>
       </div>

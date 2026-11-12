@@ -36,16 +36,16 @@ export default function Ranking() {
     reorder('ranked', from, to)
   }
 
-  if (loading) return <p className="py-16 text-center text-zinc-500">Loading…</p>
+  if (loading) return <p className="py-16 text-center text-muted">Loading…</p>
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-semibold tracking-tight">Your ranking</h1>
-      <p className="mb-6 text-sm text-zinc-500">Drag albums to reorder. #1 is your favourite.</p>
+      <h1 className="mb-1 font-display text-3xl font-semibold">Your ranking</h1>
+      <p className="mb-6 text-sm text-muted">Drag albums to reorder. #1 is your favourite.</p>
       <ErrorBanner message={error} />
       {ranked.length === 0 ? (
-        <p className="py-16 text-center text-zinc-500">
-          Nothing ranked yet. <Link to="/" className="text-accent-600 underline">Search for an album</Link>.
+        <p className="py-16 text-center text-muted">
+          Nothing ranked yet. <Link to="/" className="text-lime underline">Search for an album</Link>.
         </p>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
@@ -74,8 +74,8 @@ function RankRow({ entry, rank, total, onInfo }: { entry: Entry; rank: number; t
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center gap-3 rounded-xl bg-white p-2 pr-3 ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800 ${
-        isDragging ? 'relative z-10 shadow-lg ring-accent-500' : 'shadow-sm'
+      className={`flex items-center gap-3 rounded-xl bg-surface p-2 pr-3 ring-1 ring-line ${
+        isDragging ? 'relative z-10 shadow-lg ring-lime' : 'shadow-sm'
       }`}
     >
       <button
@@ -83,21 +83,21 @@ function RankRow({ entry, rank, total, onInfo }: { entry: Entry; rank: number; t
         {...attributes}
         {...listeners}
         aria-label={`Drag ${entry.title}`}
-        className="cursor-grab touch-none px-1 text-zinc-400 hover:text-zinc-600 active:cursor-grabbing"
+        className="cursor-grab touch-none px-1 text-muted hover:text-muted active:cursor-grabbing"
       >
         ⠿
       </button>
-      <span className={`w-8 text-right text-lg font-semibold tabular-nums ${rank <= 3 ? 'text-accent-600' : 'text-zinc-400'}`}>
+      <span className={`w-8 text-right text-lg font-semibold tabular-nums ${rank <= 3 ? 'text-lime' : 'text-faint'}`}>
         {rank}
       </span>
       <button className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left" onClick={onInfo} aria-label={`Show info for ${entry.title}`}>
-        <Cover src={entry.cover} alt={entry.title} className="size-14 shrink-0" />
+        <Cover src={entry.cover} alt={entry.title} size="sm" eager={rank <= 12} className="size-14 shrink-0" />
         <AlbumMeta album={entry} />
       </button>
       <div className="flex shrink-0 items-center gap-0.5">
         <button className="btn btn-ghost px-2" disabled={rank === 1} onClick={() => reorder('ranked', rank - 1, rank - 2)} aria-label="Move up">↑</button>
         <button className="btn btn-ghost px-2" disabled={rank === total} onClick={() => reorder('ranked', rank - 1, rank)} aria-label="Move down">↓</button>
-        <button className="btn btn-ghost px-2.5 ring-1 ring-zinc-300 dark:ring-zinc-700" onClick={onInfo} title="Album info" aria-label={`Info: ${entry.title}`}>
+        <button className="btn btn-ghost px-2.5 ring-1 ring-line" onClick={onInfo} title="Album info" aria-label={`Info: ${entry.title}`}>
           ⓘ<span className="hidden sm:inline"> Info</span>
         </button>
       </div>
