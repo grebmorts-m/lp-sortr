@@ -13,4 +13,4 @@ jobs:
     steps:
       - run: |
           curl -fsS "${{ vars.VITE_SUPABASE_URL }}/rest/v1/albums_entries?select=id&limit=1" \
-            -H "apikey: ${{ vars.VITE_SUPABASE_ANON_KEY }}" -o /dev/null -w "%{http_code}\n"
+            -H "apikey: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}" -o /dev/null -w "%{http_code}\n"
