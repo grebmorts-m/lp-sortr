@@ -2,19 +2,41 @@ import { useState, type FormEvent } from 'react'
 import { useAuth } from '../auth/AuthContext'
 import { supabase } from '../data/supabase'
 import ErrorBanner from '../components/ErrorBanner'
+import PasswordInput from '../components/PasswordInput'
+
+const MIN_PASSWORD = 6
 
 export default function Login() {
   const { signIn, signUp, tryAsGuest } = useAuth()
-  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [mode, setModeRaw] = useState<'login' | 'register'>('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  /** Shared by both password fields, so they can be compared as text. */
+  const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+
+  const setMode = (m: typeof mode) => {
+    setModeRaw(m)
+    setConfirm('')
+    setShowPw(false)
+    setError(null)
+  }
+
+  const register = mode === 'register'
+  const longEnough = password.length >= MIN_PASSWORD
+  const matches = confirm === password
+  const canSubmit = username.trim() !== '' && password !== '' && (!register || (longEnough && matches))
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (mode === 'register' && password.length < 6) return setError('Password must be at least 6 characters.')
+    if (!canSubmit) {
+      if (register && !longEnough) return setError(`Password must be at least ${MIN_PASSWORD} characters.`)
+      if (register && !matches) return setError("Passwords don't match.")
+      return
+    }
     setBusy(true)
     try {
       await (mode === 'login' ? signIn : signUp)(username, password)
@@ -46,16 +68,44 @@ export default function Login() {
             </div>
             <ErrorBanner message={error} />
             <input className="input" placeholder="Username" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-            <input
-              className="input"
-              type="password"
+            <PasswordInput
               placeholder="Password"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              autoComplete={register ? 'new-password' : 'current-password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              onChange={setPassword}
+              visible={showPw}
+              onToggle={() => setShowPw((v) => !v)}
+              describedBy={register ? 'pw-hint' : undefined}
             />
-            <button className="btn btn-primary py-2" disabled={busy}>
+            {register && (
+              <>
+                {!confirm && (
+                  <p id="pw-hint" className={`-mt-1 text-xs ${password && !longEnough ? 'text-red-400' : 'text-muted'}`}>
+                    At least {MIN_PASSWORD} characters
+                  </p>
+                )}
+                <PasswordInput
+                  placeholder="Confirm password"
+                  autoComplete="new-password"
+                  value={confirm}
+                  onChange={setConfirm}
+                  visible={showPw}
+                  onToggle={() => setShowPw((v) => !v)}
+                  invalid={confirm !== '' && !matches}
+                  describedBy="confirm-hint"
+                />
+                {confirm && (
+                  <p id="confirm-hint" aria-live="polite" className={`-mt-1 text-xs ${matches ? 'text-lime' : 'text-red-400'}`}>
+                    {matches
+                      ? longEnough
+                        ? 'Passwords match ✓'
+                        : `Passwords match, but need at least ${MIN_PASSWORD} characters`
+                      : "Passwords don't match"}
+                  </p>
+                )}
+              </>
+            )}
+            <button className="btn btn-primary py-2" disabled={busy || !canSubmit}>
               {busy ? 'Please wait…' : mode === 'login' ? 'Log in' : 'Create account'}
             </button>
             {mode === 'register' && (
