@@ -19,13 +19,14 @@ Rank the albums you've listened to, and keep a shortlist of what to hear next.
    Usernames are mapped to made-up emails (`<username>@users.lp-sortr.app`), so confirmation mails would never arrive.
 3. **SQL Editor**: paste [`supabase/schema.sql`](supabase/schema.sql) and click Run.
    If you ran an older version of the schema, run [`supabase/migrate-002-multi-source.sql`](supabase/migrate-002-multi-source.sql) instead.
-4. **Project Settings → API**: copy the *Project URL* and the *anon public* key.
+4. **Project Settings → API Keys**: copy the *Project URL* and the *publishable* key (`sb_publishable_…`).
 
 ### 2. GitHub
-1. **Settings → Pages → Source**: select **GitHub Actions**.
-2. **Settings → Secrets and variables → Actions → Variables**: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
-   The anon key is meant to be public; RLS is what protects the data.
-3. Push to `main`. The site deploys to `https://<user>.github.io/lp-sortr/`.
+1. The repo must be **public** for GitHub Pages on a free plan.
+2. **Settings → Pages → Source**: select **GitHub Actions**.
+3. **Settings → Secrets and variables → Actions → Variables**: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
+   The publishable key is meant to be public; RLS is what protects the data.
+4. Push to `main`. The site deploys to `https://<user>.github.io/lp-sortr/`.
 
 The `keepalive` workflow pings Supabase daily, so the free project never pauses for inactivity.
 
