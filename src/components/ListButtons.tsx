@@ -10,14 +10,14 @@ export default function ListButtons({ album, className = '' }: { album: Album; c
   return (
     <div className={`flex gap-1.5 ${className}`}>
       <button
-        className={`btn flex-1 ${inList === 'ranked' ? 'bg-zinc-200 text-zinc-500 dark:bg-zinc-800' : 'btn-primary'}`}
+        className={`btn flex-1 ${inList === 'ranked' ? 'bg-surface-2 text-muted' : 'btn-primary'}`}
         disabled={inList === 'ranked'}
         onClick={() => openRank(album)}
       >
         {inList === 'ranked' ? 'Ranked ✓' : 'Rank it'}
       </button>
       <button
-        className="btn btn-ghost flex-1 ring-1 ring-zinc-300 dark:ring-zinc-700"
+        className="btn btn-ghost flex-1 ring-1 ring-line"
         disabled={inList === 'shortlist'}
         onClick={() => addTo(album, 'shortlist')}
       >

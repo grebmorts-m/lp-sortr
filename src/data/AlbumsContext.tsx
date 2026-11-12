@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCoverUpgrade } from './coverUpgrade'
 import { sameAlbum } from './normalize'
 import type { Album, AlbumStore, Entry, ListName } from './types'
 
@@ -46,6 +47,24 @@ export function AlbumsProvider({ store, children }: { store: AlbumStore; childre
       alive = false
     }
   }, [store])
+
+  const entriesRef = useRef(entries)
+  entriesRef.current = entries
+
+  // Swap slow MusicBrainz covers for iTunes ones in the background (not for unsaved changes).
+  const applyUpgrade = useCallback(
+    (id: string, patch: Pick<Entry, 'itunesId' | 'cover'>) => {
+      const current = entriesRef.current.find((e) => e.id === id)
+      if (!current) return
+      const updated = { ...current, ...patch }
+      setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)))
+      store.save(updated).catch(() => {
+        /* kept in memory; retried next visit */
+      })
+    },
+    [store],
+  )
+  useCoverUpgrade(loading ? [] : entries, applyUpgrade)
 
   // Optimistic update: change local state first, roll back on failure.
   const commit = useCallback(

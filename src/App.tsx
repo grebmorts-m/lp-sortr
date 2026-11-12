@@ -23,7 +23,7 @@ export default function App() {
   )
 
   if (state.status === 'loading') {
-    return <div className="grid min-h-dvh place-items-center text-zinc-500">Loading…</div>
+    return <div className="grid min-h-dvh place-items-center text-muted">Loading…</div>
   }
   if (state.status === 'signedOut') return <Login />
 

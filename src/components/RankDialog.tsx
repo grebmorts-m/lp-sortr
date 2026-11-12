@@ -54,7 +54,7 @@ export function RankDialogProvider({ children }: { children: ReactNode }) {
         // Clicks on the dialog element itself (not its content) are backdrop clicks.
         onClick={(e) => e.target === e.currentTarget && close()}
         aria-labelledby="rank-dialog-title"
-        className="m-auto w-[min(32rem,calc(100vw-2rem))] rounded-2xl bg-white p-0 text-zinc-900 shadow-2xl backdrop:bg-zinc-950/50 dark:bg-zinc-900 dark:text-zinc-100"
+        className="m-auto w-[min(32rem,calc(100vw-2rem))] rounded-2xl bg-surface p-0 text-fg shadow-2xl backdrop:bg-bg/50"
       >
         {album && <RankForm key={album.id} album={album} onDone={close} />}
       </dialog>
@@ -121,10 +121,10 @@ function RankForm({ album, onDone }: { album: Album; onDone: () => void }) {
       }}
       className="flex max-h-[90dvh] flex-col"
     >
-      <div className="flex items-center gap-3 border-b border-zinc-200 p-4 dark:border-zinc-800">
-        <Cover src={album.cover} alt={album.title} className="size-14 shrink-0" />
+      <div className="flex items-center gap-3 border-b border-line p-4">
+        <Cover src={album.cover} alt={album.title} size="sm" eager className="size-14 shrink-0" />
         <div className="min-w-0">
-          <h2 id="rank-dialog-title" className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+          <h2 id="rank-dialog-title" className="text-xs font-medium uppercase tracking-wide text-muted">
             Rank album
           </h2>
           <AlbumMeta album={album} />
@@ -132,11 +132,11 @@ function RankForm({ album, onDone }: { album: Album; onDone: () => void }) {
       </div>
 
       {others.length === 0 ? (
-        <p className="p-8 text-center text-zinc-600 dark:text-zinc-300">This will be your first ranked album. 🎉</p>
+        <p className="p-8 text-center text-fg/80">This will be your first ranked album. 🎉</p>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col gap-3 p-4">
           <label className="flex items-center gap-2 text-sm">
-            <span className="font-medium text-zinc-600 dark:text-zinc-300">Rank</span>
+            <span className="font-medium text-fg/80">Rank</span>
             <div className="relative">
               <input
                 type="number"
@@ -162,7 +162,7 @@ function RankForm({ album, onDone }: { album: Album; onDone: () => void }) {
                     aria-label={`${label} rank number`}
                     onClick={() => setSlot(slot + d)}
                     disabled={d === 1 ? slot === others.length : slot === 0}
-                    className="grid h-3.5 w-4 place-items-center bg-transparent text-zinc-500 transition hover:text-zinc-900 disabled:opacity-30 dark:text-white dark:hover:text-accent-400"
+                    className="grid h-3.5 w-4 place-items-center bg-transparent text-fg transition hover:text-lime disabled:opacity-30"
                   >
                     <svg viewBox="0 0 16 16" className="size-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                       <path d={path} />
@@ -171,17 +171,17 @@ function RankForm({ album, onDone }: { album: Album; onDone: () => void }) {
                 ))}
               </div>
             </div>
-            <span className="text-zinc-600 dark:text-zinc-300">
+            <span className="text-fg/80">
               of <span className="font-semibold tabular-nums">{total}</span>
             </span>
-            <span className="ml-auto text-xs text-zinc-500">or drag it in the list</span>
+            <span className="ml-auto text-xs text-muted">or drag it in the list</span>
           </label>
 
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
             <SortableContext items={ids} strategy={verticalListSortingStrategy}>
               <ol
                 aria-label="Your ranking"
-                className="h-[min(26rem,55dvh)] overflow-y-auto overscroll-contain rounded-xl bg-zinc-100 p-2 text-sm dark:bg-zinc-800/60"
+                className="h-[min(26rem,55dvh)] overflow-y-auto overscroll-contain rounded-xl bg-surface-2 p-2 text-sm"
               >
                 {rows.map((r, i) =>
                   r === NEW_ID ? (
@@ -205,8 +205,8 @@ function RankForm({ album, onDone }: { album: Album; onDone: () => void }) {
         </div>
       )}
 
-      <div className="flex justify-end gap-2 border-t border-zinc-200 p-4 dark:border-zinc-800">
-        <button type="button" className="btn btn-ghost ring-1 ring-zinc-300 dark:ring-zinc-700" onClick={onDone}>
+      <div className="flex justify-end gap-2 border-t border-line p-4">
+        <button type="button" className="btn btn-ghost ring-1 ring-line" onClick={onDone}>
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
@@ -244,7 +244,7 @@ function NewRow({
         rowRef.current = el
       }}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`relative my-1 flex items-center gap-3 rounded-lg bg-accent-500/25 px-2 py-2 ring-1 ring-accent-500 ${
+      className={`relative my-1 flex items-center gap-3 rounded-lg bg-lime-soft px-2 py-2 ring-1 ring-lime ${
         isDragging ? 'z-10 shadow-lg' : ''
       }`}
     >
@@ -254,11 +254,11 @@ function NewRow({
         {...attributes}
         {...listeners}
         aria-label={`Drag ${title} to its place`}
-        className="cursor-grab touch-none px-1 text-accent-600 active:cursor-grabbing dark:text-accent-400"
+        className="cursor-grab touch-none px-1 text-lime active:cursor-grabbing"
       >
         ⠿
       </button>
-      <span className="w-7 text-right font-semibold tabular-nums text-accent-600 dark:text-accent-400">{rank}</span>
+      <span className="w-7 text-right font-semibold tabular-nums text-lime">{rank}</span>
       <span className="min-w-0 flex-1 truncate font-medium">{title}</span>
       <button type="button" className="btn btn-ghost px-2 py-0.5" disabled={!canUp} onClick={onUp} aria-label="Move up">
         ▲
@@ -277,12 +277,12 @@ function OtherRow({ rank, entry }: { rank: number; entry: Entry }) {
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className="flex items-center gap-3 px-2 py-1.5 text-zinc-600 dark:text-zinc-400"
+      className="flex items-center gap-3 px-2 py-1.5 text-muted"
     >
       <span className="w-5" />
-      <span className="w-7 text-right tabular-nums text-zinc-400">{rank}</span>
+      <span className="w-7 text-right tabular-nums text-muted">{rank}</span>
       <span className="min-w-0 flex-1 truncate">
-        {entry.title} <span className="text-zinc-400">— {entry.artist}</span>
+        {entry.title} <span className="text-muted">— {entry.artist}</span>
       </span>
     </li>
   )
