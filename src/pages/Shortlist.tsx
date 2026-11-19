@@ -7,29 +7,30 @@ import AlbumMeta from '../components/AlbumMeta'
 import ErrorBanner from '../components/ErrorBanner'
 import AlbumDrawer from '../components/AlbumDrawer'
 import { useRankDialog } from '../components/RankDialog'
-import Segmented from '../components/Segmented'
-import { DEFAULT_DESC, filterEntries, sortEntries, type ShortlistSort } from '../data/shortlistView'
+import { filterEntries, sortEntries, type ShortlistSort } from '../data/shortlistView'
 
 const SORT_KEY = 'lp-sortr:shortlist-sort'
-const SORTS: [ShortlistSort, string][] = [
-  ['added', 'Added'],
-  ['year', 'Year'],
-  ['artist', 'Artist'],
+type Order = { sort: ShortlistSort; desc: boolean }
+// Arrows follow sort direction: ↑ ascending (oldest first, A–Z), ↓ descending.
+const ORDERS: { key: string; label: string; order: Order }[] = [
+  { key: 'added-desc', label: '↓ Added: newest first', order: { sort: 'added', desc: true } },
+  { key: 'added-asc', label: '↑ Added: oldest first', order: { sort: 'added', desc: false } },
+  { key: 'year-desc', label: '↓ Year: newest first', order: { sort: 'year', desc: true } },
+  { key: 'year-asc', label: '↑ Year: oldest first', order: { sort: 'year', desc: false } },
+  { key: 'artist-asc', label: '↑ Artist: A–Z', order: { sort: 'artist', desc: false } },
+  { key: 'artist-desc', label: '↓ Artist: Z–A', order: { sort: 'artist', desc: true } },
 ]
+const keyOf = ({ sort, desc }: Order) => `${sort}-${desc ? 'desc' : 'asc'}`
 
-function loadSort(): { sort: ShortlistSort; desc: boolean } {
+function loadSort(): Order {
   try {
     const v = JSON.parse(localStorage.getItem(SORT_KEY) ?? 'null')
-    if (v && SORTS.some(([k]) => k === v.sort) && typeof v.desc === 'boolean') return v
+    const known = v && ORDERS.find((o) => o.key === keyOf(v))
+    if (known) return known.order
   } catch {
     /* storage unavailable or corrupt */
   }
-  return { sort: 'added', desc: DEFAULT_DESC.added }
-}
-
-function directionLabel(sort: ShortlistSort, desc: boolean) {
-  if (sort === 'artist') return desc ? 'Z–A' : 'A–Z'
-  return desc ? 'Newest first' : 'Oldest first'
+  return ORDERS[0].order
 }
 
 export default function Shortlist() {
@@ -95,25 +96,22 @@ export default function Shortlist() {
                 </button>
               )}
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <Segmented
-                options={SORTS}
-                value={sort}
-                onChange={(s) => setOrder({ sort: s, desc: DEFAULT_DESC[s] })}
-                label="Sort by"
-              />
-              <button
-                type="button"
-                onClick={() => setOrder({ sort, desc: !desc })}
-                aria-label={`Sort direction: ${directionLabel(sort, desc)}`}
-                title="Reverse order"
-                className="flex items-center gap-1.5 rounded-lg bg-surface px-3 py-2 text-sm font-medium text-muted ring-1 ring-line transition hover:text-fg"
+            <div className="relative shrink-0 self-start sm:self-auto">
+              <select
+                aria-label="Sort shortlist"
+                className="input cursor-pointer appearance-none py-2 pr-9 text-sm font-medium"
+                value={keyOf({ sort, desc })}
+                onChange={(e) => setOrder(ORDERS.find((o) => o.key === e.target.value)!.order)}
               >
-                <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d={desc ? 'M8 3v10M4 9l4 4 4-4' : 'M8 13V3M4 7l4-4 4 4'} />
-                </svg>
-                <span className="whitespace-nowrap">{directionLabel(sort, desc)}</span>
-              </button>
+                {ORDERS.map((o) => (
+                  <option key={o.key} value={o.key}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+              <svg viewBox="0 0 16 16" className="pointer-events-none absolute inset-y-0 right-3 my-auto size-4 text-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M4 6l4 4 4-4" />
+              </svg>
             </div>
           </div>
 

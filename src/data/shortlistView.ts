@@ -3,9 +3,6 @@ import type { Entry } from './types'
 
 export type ShortlistSort = 'added' | 'year' | 'artist'
 
-/** Natural direction for each sort: newest first for dates, A–Z for names. */
-export const DEFAULT_DESC: Record<ShortlistSort, boolean> = { added: true, year: true, artist: false }
-
 /** Keep entries whose title + artist contain every word of the query (case/accent-insensitive). */
 export function filterEntries(entries: Entry[], query: string): Entry[] {
   const words = normalizeQuery(query).split(' ').filter(Boolean)
