@@ -117,7 +117,7 @@ function DrawerBody({ album, titleId, onClose }: { album: Album; titleId: string
         {load.status === 'ok' && <Details d={load.details} />}
       </div>
 
-      <RemoveFromRanking album={album} onRemoved={onClose} />
+      <RemoveFromList album={album} onRemoved={onClose} />
     </>
   )
 }
@@ -228,16 +228,17 @@ function Skeleton() {
   )
 }
 
-/** Shown for ranked albums: "Remove" reveals a confirmation before deleting. */
-function RemoveFromRanking({ album, onRemoved }: { album: Album; onRemoved: () => void }) {
+/** Shown for saved albums: "Remove" reveals a confirmation before deleting. */
+function RemoveFromList({ album, onRemoved }: { album: Album; onRemoved: () => void }) {
   const { listOf, remove } = useAlbums()
   const [confirming, setConfirming] = useState(false)
-  if (listOf(album) !== 'ranked') return null
+  const list = listOf(album)
+  if (!list) return null
 
   if (!confirming) {
     return (
       <button
-        className="btn mt-8 w-full text-red-600 ring-1 ring-red-200 hover:bg-red-50 text-red-400 ring-red-900 hover:bg-red-950/50"
+        className="btn mt-8 w-full text-red-400 ring-1 ring-red-900 hover:bg-red-950/50"
         onClick={() => setConfirming(true)}
       >
         Remove
@@ -246,9 +247,9 @@ function RemoveFromRanking({ album, onRemoved }: { album: Album; onRemoved: () =
   }
 
   return (
-    <div role="alertdialog" aria-label="Confirm removal" className="mt-8 rounded-lg border border-red-200 bg-red-50 p-3 border-red-900 bg-red-950/40">
-      <p className="mb-2 text-sm text-red-800 text-red-300">
-        Remove <strong>{album.title}</strong> from your ranking? This can't be undone.
+    <div role="alertdialog" aria-label="Confirm removal" className="mt-8 rounded-lg border border-red-900 bg-red-950/40 p-3">
+      <p className="mb-2 text-sm text-red-300">
+        Remove <strong>{album.title}</strong> from your {list === 'ranked' ? 'ranking' : 'shortlist'}? This can't be undone.
       </p>
       <div className="flex gap-1.5">
         <button
